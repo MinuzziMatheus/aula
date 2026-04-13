@@ -4,6 +4,16 @@ async function listarTodos(filtros = {}) {
   const values = [];
   const conditions = [];
 
+  if (filtros.data_inicial) {
+    values.push(filtros.data_inicial);
+    conditions.push(`data_lancamento >= $${values.length}`);
+  }
+
+  if (filtros.data_final) {
+    values.push(filtros.data_final);
+    conditions.push(`data_lancamento <= $${values.length}`);
+  }
+
   if (filtros.tipo_lancamento) {
     values.push(filtros.tipo_lancamento);
     conditions.push(`tipo_lancamento = $${values.length}`);

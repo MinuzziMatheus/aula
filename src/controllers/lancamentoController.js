@@ -3,6 +3,8 @@ const lancamentoService = require('../services/lancamentoService');
 async function listarLancamentos(request, response, next) {
   try {
     const filtros = {
+      data_inicial: request.query.data_inicial,
+      data_final: request.query.data_final,
       tipo_lancamento: request.query.tipo_lancamento,
       situacao: request.query.situacao
     };
@@ -44,9 +46,33 @@ async function atualizarLancamento(request, response, next) {
   }
 }
 
+async function exportarLancamentosPdf(request, response, next) {
+  try {
+    const filtros = {
+      data_inicial: request.query.data_inicial,
+      data_final: request.query.data_final,
+      tipo_lancamento: request.query.tipo_lancamento,
+      situacao: request.query.situacao
+    };
+
+    const pdfBuffer = await lancamentoService.exportarLancamentosPdf(filtros);
+
+    response.setHeader('Content-Type', 'application/pdf');
+    response.setHeader(
+      'Content-Disposition',
+      'attachment; filename="lancamentos.pdf"'
+    );
+
+    response.status(200).send(pdfBuffer);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   listarLancamentos,
   buscarLancamentoPorId,
   criarLancamento,
-  atualizarLancamento
+  atualizarLancamento,
+  exportarLancamentosPdf
 };

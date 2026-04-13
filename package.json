@@ -9,7 +9,8 @@
   },
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest --runInBand"
   },
   "keywords": [
     "nodejs",
@@ -26,9 +27,11 @@
     "helmet": "^8.1.0",
     "morgan": "^1.10.1",
     "nodemailer": "^7.0.13",
+    "pdfkit": "^0.17.2",
     "pg": "^8.20.0"
   },
   "devDependencies": {
+    "jest": "^30.3.0",
     "nodemon": "^3.1.14"
   }
 }

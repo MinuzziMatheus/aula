@@ -1,5 +1,6 @@
 const lancamentoModel = require('../models/lancamentoModel');
 const mailService = require('./mailService');
+const pdfService = require('./pdfService');
 
 function validarPayloadLancamento(payload) {
   const camposObrigatorios = [
@@ -19,7 +20,30 @@ function validarPayloadLancamento(payload) {
   }
 }
 
+function validarFiltrosLancamento(filtros = {}) {
+  const { data_inicial, data_final } = filtros;
+
+  if (data_inicial && Number.isNaN(Date.parse(data_inicial))) {
+    const error = new Error('Filtro data_inicial invalido. Use o formato YYYY-MM-DD.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (data_final && Number.isNaN(Date.parse(data_final))) {
+    const error = new Error('Filtro data_final invalido. Use o formato YYYY-MM-DD.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (data_inicial && data_final && new Date(data_inicial) > new Date(data_final)) {
+    const error = new Error('Filtro de periodo invalido. data_inicial nao pode ser maior que data_final.');
+    error.statusCode = 400;
+    throw error;
+  }
+}
+
 async function listarLancamentos(filtros) {
+  validarFiltrosLancamento(filtros);
   return lancamentoModel.listarTodos(filtros);
 }
 
@@ -78,9 +102,16 @@ async function atualizarLancamento(id, payload) {
   return lancamento;
 }
 
+async function exportarLancamentosPdf(filtros) {
+  validarFiltrosLancamento(filtros);
+  const lancamentos = await lancamentoModel.listarTodos(filtros);
+  return pdfService.gerarPdfLancamentos(lancamentos);
+}
+
 module.exports = {
   listarLancamentos,
   buscarLancamentoPorId,
   criarLancamento,
-  atualizarLancamento
+  atualizarLancamento,
+  exportarLancamentosPdf
 };

@@ -3,6 +3,7 @@ const lancamentoController = require('../controllers/lancamentoController');
 
 const router = Router();
 
+router.get('/export/pdf', lancamentoController.exportarLancamentosPdf);
 router.get('/', lancamentoController.listarLancamentos);
 router.get('/:id', lancamentoController.buscarLancamentoPorId);
 router.post('/', lancamentoController.criarLancamento);
