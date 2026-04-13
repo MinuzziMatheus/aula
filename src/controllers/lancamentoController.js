@@ -32,8 +32,21 @@ async function criarLancamento(request, response, next) {
   }
 }
 
+async function atualizarLancamento(request, response, next) {
+  try {
+    const lancamento = await lancamentoService.atualizarLancamento(
+      Number(request.params.id),
+      request.body
+    );
+    response.status(200).json(lancamento);
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   listarLancamentos,
   buscarLancamentoPorId,
-  criarLancamento
+  criarLancamento,
+  atualizarLancamento
 };

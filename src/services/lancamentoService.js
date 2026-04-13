@@ -1,4 +1,5 @@
 const lancamentoModel = require('../models/lancamentoModel');
+const mailService = require('./mailService');
 
 function validarPayloadLancamento(payload) {
   const camposObrigatorios = [
@@ -42,11 +43,44 @@ async function buscarLancamentoPorId(id) {
 
 async function criarLancamento(payload) {
   validarPayloadLancamento(payload);
-  return lancamentoModel.criar(payload);
+  const lancamento = await lancamentoModel.criar(payload);
+  await mailService.enviarEmailLancamento({
+    operacao: 'criado',
+    lancamento
+  });
+
+  return lancamento;
+}
+
+async function atualizarLancamento(id, payload) {
+  if (!Number.isInteger(id) || id <= 0) {
+    const error = new Error('Id de lancamento invalido.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  validarPayloadLancamento(payload);
+
+  const existente = await lancamentoModel.buscarPorId(id);
+
+  if (!existente) {
+    const error = new Error('Lancamento nao encontrado.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const lancamento = await lancamentoModel.atualizar(id, payload);
+  await mailService.enviarEmailLancamento({
+    operacao: 'atualizado',
+    lancamento
+  });
+
+  return lancamento;
 }
 
 module.exports = {
   listarLancamentos,
   buscarLancamentoPorId,
-  criarLancamento
+  criarLancamento,
+  atualizarLancamento
 };

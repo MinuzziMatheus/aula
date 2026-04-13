@@ -21,5 +21,15 @@ module.exports = {
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || 'postgres',
     ssl: parseBoolean(process.env.DB_SSL, false)
+  },
+  mail: {
+    enabled: parseBoolean(process.env.MAIL_ENABLED, false),
+    host: process.env.MAIL_HOST || '',
+    port: Number(process.env.MAIL_PORT || 587),
+    user: process.env.MAIL_USER || '',
+    password: process.env.MAIL_PASSWORD || '',
+    from: process.env.MAIL_FROM || '',
+    to: process.env.MAIL_TO || '',
+    secure: parseBoolean(process.env.MAIL_SECURE, false)
   }
 };

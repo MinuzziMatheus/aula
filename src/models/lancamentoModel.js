@@ -63,8 +63,28 @@ async function criar({ descricao, data_lancamento, valor, tipo_lancamento, situa
   return result.rows[0];
 }
 
+async function atualizar(id, { descricao, data_lancamento, valor, tipo_lancamento, situacao }) {
+  const result = await db.query(
+    `
+      UPDATE lancamento
+      SET
+        descricao = $2,
+        data_lancamento = $3,
+        valor = $4,
+        tipo_lancamento = $5,
+        situacao = $6
+      WHERE id = $1
+      RETURNING id, descricao, data_lancamento, valor, tipo_lancamento, situacao
+    `,
+    [id, descricao, data_lancamento, valor, tipo_lancamento, situacao]
+  );
+
+  return result.rows[0] || null;
+}
+
 module.exports = {
   listarTodos,
   buscarPorId,
-  criar
+  criar,
+  atualizar
 };
