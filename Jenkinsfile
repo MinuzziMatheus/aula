@@ -29,7 +29,11 @@ pipeline {
             input "Confirma deploy em produção?"
           }
 
-          sh "docker-compose up -d --no-deps --build app_${params.ENV}"
+          sh """
+            docker-compose stop app_${params.ENV} || true
+            docker-compose rm -f app_${params.ENV} || true
+            docker-compose up -d --no-deps --build app_${params.ENV}
+          """
         }
       }
     }
