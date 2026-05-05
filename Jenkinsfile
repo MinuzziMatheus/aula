@@ -5,22 +5,23 @@ pipeline {
     choice(name: 'ENV', choices: ['local', 'hml', 'prod'], description: 'Ambiente')
   }
 
-  stage('Setup Env') {
-    steps {
-      sh '''
-        echo "NODE_ENV=development" > .env
-        echo "PORT=3000" >> .env
-        echo "DB_HOST=db" >> .env
-        echo "DB_PORT=5432" >> .env
-        echo "DB_NAME=finance_api" >> .env
-        echo "DB_USER=postgres" >> .env
-        echo "DB_PASSWORD=admin" >> .env
-        echo "DB_SSL=false" >> .env
-      '''
-    }
-  }
-
   stages {
+
+    stage('Setup Env') {
+      steps {
+        sh '''
+          echo "NODE_ENV=development" > .env
+          echo "PORT=3000" >> .env
+          echo "DB_HOST=db" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "DB_NAME=finance_api" >> .env
+          echo "DB_USER=postgres" >> .env
+          echo "DB_PASSWORD=admin" >> .env
+          echo "DB_SSL=false" >> .env
+        '''
+      }
+    }
+
     stage('Deploy') {
       steps {
         script {
@@ -41,5 +42,6 @@ pipeline {
         }
       }
     }
+
   }
 }
