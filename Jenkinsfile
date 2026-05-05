@@ -7,31 +7,13 @@ pipeline {
 
   stages {
 
-    stage('Setup Env') {
-      steps {
-        sh '''
-          echo "NODE_ENV=development" > .env
-          echo "PORT=3000" >> .env
-          echo "DB_HOST=db" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "DB_NAME=finance_api" >> .env
-          echo "DB_USER=postgres" >> .env
-          echo "DB_PASSWORD=admin" >> .env
-          echo "DB_SSL=false" >> .env
-        '''
-      }
-    }
-
     stage('Deploy') {
       steps {
         script {
-          if (params.ENV == 'prod') {
-            input "Confirma deploy em produção?"
-          }
+          def project = "finance-api-${params.ENV}"
 
           sh """
-            docker-compose -p finance-api-${params.ENV} down || true
-            docker-compose -p finance-api-${params.ENV} up -d --build
+            docker-compose -p ${project} up -d --build app_${params.ENV}
           """
         }
       }
@@ -43,14 +25,14 @@ pipeline {
           def port = params.ENV == 'local' ? '3000' : params.ENV == 'hml' ? '3001' : '3002'
 
           sh """
-            for i in \$(seq 1 5)
+            for i in \$(seq 1 10)
             do
               echo "Tentativa \$i..."
-              curl http://localhost:${port} && exit 0
-              sleep 5
+              curl --fail http://localhost:${port} && exit 0
+              sleep 3
             done
 
-            echo "API não respondeu"
+            echo "API falhou"
             exit 1
           """
         }
