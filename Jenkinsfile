@@ -30,9 +30,8 @@ pipeline {
           }
 
           sh """
-            docker-compose stop app_${params.ENV} || true
-            docker-compose rm -f app_${params.ENV} || true
-            docker-compose up -d --no-deps --build app_${params.ENV}
+            docker-compose -p finance-api-${params.ENV} down || true
+            docker-compose -p finance-api-${params.ENV} up -d --build
           """
         }
       }
@@ -44,15 +43,15 @@ pipeline {
           def port = params.ENV == 'local' ? '3000' : params.ENV == 'hml' ? '3001' : '3002'
 
           sh """
-          for i in {1..5}
-          do
-            echo "Tentativa \$i..."
-            curl http://host.docker.internal:${port} && exit 0
-            sleep 5
-          done
+            for i in \$(seq 1 5)
+            do
+              echo "Tentativa \$i..."
+              curl http://localhost:${port} && exit 0
+              sleep 5
+            done
 
-          echo "API não respondeu"
-          exit 1
+            echo "API não respondeu"
+            exit 1
           """
         }
       }

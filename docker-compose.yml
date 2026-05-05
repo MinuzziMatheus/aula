@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # ---------- LOCAL ----------
+
   db_local:
     image: postgres:15
     restart: always
@@ -28,7 +28,6 @@ services:
     depends_on:
       - db_local
 
-  # ---------- HML ----------
   db_hml:
     image: postgres:15
     restart: always
@@ -55,7 +54,6 @@ services:
     depends_on:
       - db_hml
 
-  # ---------- PROD ----------
   db_prod:
     image: postgres:15
     restart: always
