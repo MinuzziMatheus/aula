@@ -42,7 +42,18 @@ pipeline {
       steps {
         script {
           def port = params.ENV == 'local' ? '3000' : params.ENV == 'hml' ? '3001' : '3002'
-          sh "curl http://host.docker.internal:${port}"
+
+          sh """
+          for i in {1..5}
+          do
+            echo "Tentativa \$i..."
+            curl http://host.docker.internal:${port} && exit 0
+            sleep 5
+          done
+
+          echo "API não respondeu"
+          exit 1
+          """
         }
       }
     }
