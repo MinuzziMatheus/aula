@@ -5,15 +5,13 @@ services:
       dockerfile: Dockerfile
     restart: always
     environment:
-      POSTGRES_DB: finance_api
+      POSTGRES_DB: ${DB_NAME:-finance_api}
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d finance_api"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -21,11 +19,9 @@ services:
   app:
     build: .
     restart: always
-    ports:
-      - "3000:3000"
     environment:
       DB_HOST: db
-      DB_NAME: finance_api
+      DB_NAME: ${DB_NAME:-finance_api}
       DB_USER: postgres
       DB_PASSWORD: admin
     depends_on:

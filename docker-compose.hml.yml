@@ -1,0 +1,13 @@
+services:
+  db:
+    environment:
+      POSTGRES_DB: finance_api_hml
+    ports:
+      - "5433:5432"
+
+  app:
+    environment:
+      NODE_ENV: hml
+      DB_NAME: finance_api_hml
+    ports:
+      - "3001:3000"

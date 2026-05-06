@@ -15,14 +15,15 @@ pipeline {
       steps {
         sh '''
           echo "Deploy no ambiente: ${AMBIENTE}"
-          docker compose down -v || true
+          COMPOSE_CMD="docker compose -p finance-api-${AMBIENTE} -f docker-compose.yml -f docker-compose.${AMBIENTE}.yml"
+          $COMPOSE_CMD down || true
           set +e
-          docker compose up -d --build
+          $COMPOSE_CMD up -d --build
           status=$?
           set -e
           if [ "$status" -ne 0 ]; then
-            docker compose ps
-            docker compose logs db
+            $COMPOSE_CMD ps
+            $COMPOSE_CMD logs db
             exit "$status"
           fi
         '''
@@ -32,7 +33,8 @@ pipeline {
     stage('Seed Database') {
       steps {
         sh '''
-          docker compose exec -T db psql -U postgres -d finance_api -f /docker-entrypoint-initdb.d/init.sql
+          COMPOSE_CMD="docker compose -p finance-api-${AMBIENTE} -f docker-compose.yml -f docker-compose.${AMBIENTE}.yml"
+          $COMPOSE_CMD exec -T db psql -U postgres -d finance_api_${AMBIENTE} -f /docker-entrypoint-initdb.d/init.sql
         '''
       }
     }
@@ -40,16 +42,17 @@ pipeline {
     stage('Health Check') {
       steps {
         sh '''
+          COMPOSE_CMD="docker compose -p finance-api-${AMBIENTE} -f docker-compose.yml -f docker-compose.${AMBIENTE}.yml"
           for i in $(seq 1 10)
           do
             echo "Tentativa $i"
-            docker compose exec -T app node -e "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))" && exit 0
+            $COMPOSE_CMD exec -T app node -e "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))" && exit 0
             sleep 3
           done
 
           echo "API nao respondeu"
-          docker compose ps
-          docker compose logs app
+          $COMPOSE_CMD ps
+          $COMPOSE_CMD logs app
           exit 1
         '''
       }
