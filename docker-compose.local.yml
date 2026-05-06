@@ -2,8 +2,6 @@ services:
   db:
     environment:
       POSTGRES_DB: finance_api_local
-    ports:
-      - "5432:5432"
 
   app:
     environment:
