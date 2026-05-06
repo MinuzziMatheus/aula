@@ -16,7 +16,15 @@ pipeline {
         sh '''
           echo "Deploy no ambiente: ${AMBIENTE}"
           docker compose down -v || true
+          set +e
           docker compose up -d --build
+          status=$?
+          set -e
+          if [ "$status" -ne 0 ]; then
+            docker compose ps
+            docker compose logs db
+            exit "$status"
+          fi
         '''
       }
     }

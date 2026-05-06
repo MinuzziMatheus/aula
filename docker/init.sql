@@ -20,18 +20,23 @@ VALUES ('Administrador', 'admin', '123456', 'ATIVO')
 ON CONFLICT (login) DO NOTHING;
 
 INSERT INTO lancamento (descricao, data_lancamento, valor, tipo_lancamento, situacao)
-SELECT *
+SELECT
+  seed.descricao,
+  seed.data_lancamento,
+  seed.valor,
+  seed.tipo_lancamento,
+  seed.situacao
 FROM (
   VALUES
-    ('Salario mensal', '2026-04-01', 5500.00, 'RECEITA', 'PAGO'),
-    ('Freelance website', '2026-04-03', 1800.00, 'RECEITA', 'PAGO'),
-    ('Aluguel apartamento', '2026-04-05', 1500.00, 'DESPESA', 'PAGO'),
-    ('Conta de energia', '2026-04-06', 220.45, 'DESPESA', 'PENDENTE'),
-    ('Supermercado', '2026-04-07', 489.90, 'DESPESA', 'PAGO'),
-    ('Internet residencial', '2026-04-08', 129.90, 'DESPESA', 'PAGO'),
-    ('Academia', '2026-04-09', 99.90, 'DESPESA', 'PAGO'),
-    ('Venda notebook usado', '2026-04-10', 2100.00, 'RECEITA', 'PENDENTE'),
-    ('Consulta medica', '2026-04-11', 350.00, 'DESPESA', 'PENDENTE'),
-    ('Restaurante', '2026-04-12', 142.70, 'DESPESA', 'PAGO')
+    ('Salario mensal', DATE '2026-04-01', 5500.00::NUMERIC(12, 2), 'RECEITA', 'PAGO'),
+    ('Freelance website', DATE '2026-04-03', 1800.00::NUMERIC(12, 2), 'RECEITA', 'PAGO'),
+    ('Aluguel apartamento', DATE '2026-04-05', 1500.00::NUMERIC(12, 2), 'DESPESA', 'PAGO'),
+    ('Conta de energia', DATE '2026-04-06', 220.45::NUMERIC(12, 2), 'DESPESA', 'PENDENTE'),
+    ('Supermercado', DATE '2026-04-07', 489.90::NUMERIC(12, 2), 'DESPESA', 'PAGO'),
+    ('Internet residencial', DATE '2026-04-08', 129.90::NUMERIC(12, 2), 'DESPESA', 'PAGO'),
+    ('Academia', DATE '2026-04-09', 99.90::NUMERIC(12, 2), 'DESPESA', 'PAGO'),
+    ('Venda notebook usado', DATE '2026-04-10', 2100.00::NUMERIC(12, 2), 'RECEITA', 'PENDENTE'),
+    ('Consulta medica', DATE '2026-04-11', 350.00::NUMERIC(12, 2), 'DESPESA', 'PENDENTE'),
+    ('Restaurante', DATE '2026-04-12', 142.70::NUMERIC(12, 2), 'DESPESA', 'PAGO')
 ) AS seed(descricao, data_lancamento, valor, tipo_lancamento, situacao)
 WHERE NOT EXISTS (SELECT 1 FROM lancamento);
