@@ -1,11 +1,20 @@
 pipeline {
   agent any
 
+  parameters {
+    choice(
+      name: 'AMBIENTE',
+      choices: ['local', 'hml', 'prod'],
+      description: 'Ambiente onde a API sera publicada'
+    )
+  }
+
   stages {
 
     stage('Deploy') {
       steps {
         sh '''
+          echo "Deploy no ambiente: ${AMBIENTE}"
           docker compose down -v || true
           docker compose up -d --build
         '''
