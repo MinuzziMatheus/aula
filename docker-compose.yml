@@ -1,86 +1,30 @@
-version: '3.8'
-
 services:
-
-  db_local:
+  db:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_DB: ${DB_NAME}_local
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: finance_api
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
     ports:
       - "5433:5432"
     volumes:
-      - postgres_local:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  app_local:
+  app:
     build: .
     restart: always
     ports:
-      - "3000:3000"
-    env_file:
-      - .env
+      - "${PORT}:3000"
     environment:
-      DB_HOST: db_local
-      DB_NAME: ${DB_NAME}_local
+      NODE_ENV: ${ENV}
+      DB_HOST: db
+      DB_NAME: finance_api
+      DB_USER: postgres
+      DB_PASSWORD: admin
     depends_on:
-      - db_local
-
-  db_hml:
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_DB: ${DB_NAME}_hml
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_hml:/var/lib/postgresql/data
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  app_hml:
-    build: .
-    restart: always
-    ports:
-      - "3001:3000"
-    env_file:
-      - .env
-    environment:
-      DB_HOST: db_hml
-      DB_NAME: ${DB_NAME}_hml
-    depends_on:
-      - db_hml
-
-  db_prod:
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_DB: ${DB_NAME}_prod
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5435:5432"
-    volumes:
-      - postgres_prod:/var/lib/postgresql/data
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  app_prod:
-    build: .
-    restart: always
-    ports:
-      - "3002:3000"
-    env_file:
-      - .env
-    environment:
-      DB_HOST: db_prod
-      DB_NAME: ${DB_NAME}_prod
-    depends_on:
-      - db_prod
+      - db
 
 volumes:
-  postgres_local:
-  postgres_hml:
-  postgres_prod:
+  postgres:
