@@ -16,6 +16,7 @@ pipeline {
         sh '''
           echo "Deploy no ambiente: ${AMBIENTE}"
           COMPOSE_CMD="docker compose -p finance-api-${AMBIENTE} -f docker-compose.yml -f docker-compose.${AMBIENTE}.yml"
+          docker compose -p finance-api-pipeline down || true
           $COMPOSE_CMD down || true
           set +e
           $COMPOSE_CMD up -d --build
