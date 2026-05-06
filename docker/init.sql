@@ -16,10 +16,13 @@ CREATE TABLE IF NOT EXISTS lancamento (
 );
 
 INSERT INTO usuario (nome, login, senha, situacao)
-VALUES ('Administrador', 'admin', '123456', 'ATIVO');
+VALUES ('Administrador', 'admin', '123456', 'ATIVO')
+ON CONFLICT (login) DO NOTHING;
 
 INSERT INTO lancamento (descricao, data_lancamento, valor, tipo_lancamento, situacao)
-VALUES
+SELECT *
+FROM (
+  VALUES
     ('Salario mensal', '2026-04-01', 5500.00, 'RECEITA', 'PAGO'),
     ('Freelance website', '2026-04-03', 1800.00, 'RECEITA', 'PAGO'),
     ('Aluguel apartamento', '2026-04-05', 1500.00, 'DESPESA', 'PAGO'),
@@ -29,4 +32,6 @@ VALUES
     ('Academia', '2026-04-09', 99.90, 'DESPESA', 'PAGO'),
     ('Venda notebook usado', '2026-04-10', 2100.00, 'RECEITA', 'PENDENTE'),
     ('Consulta medica', '2026-04-11', 350.00, 'DESPESA', 'PENDENTE'),
-    ('Restaurante', '2026-04-12', 142.70, 'DESPESA', 'PAGO');
+    ('Restaurante', '2026-04-12', 142.70, 'DESPESA', 'PAGO')
+) AS seed(descricao, data_lancamento, valor, tipo_lancamento, situacao)
+WHERE NOT EXISTS (SELECT 1 FROM lancamento);

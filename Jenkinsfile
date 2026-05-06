@@ -21,6 +21,14 @@ pipeline {
       }
     }
 
+    stage('Seed Database') {
+      steps {
+        sh '''
+          docker compose exec -T db psql -U postgres -d finance_api -f /docker-entrypoint-initdb.d/init.sql
+        '''
+      }
+    }
+
     stage('Health Check') {
       steps {
         sh '''
