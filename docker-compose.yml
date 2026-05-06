@@ -7,18 +7,16 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
-      - postgres:/var/lib/postgresql/data
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
 
   app:
     build: .
     restart: always
     ports:
-      - "${PORT}:3000"
+      - "3000:3000"
     environment:
-      NODE_ENV: ${ENV}
       DB_HOST: db
       DB_NAME: finance_api
       DB_USER: postgres
@@ -27,4 +25,4 @@ services:
       - db
 
 volumes:
-  postgres:
+  postgres_data:
