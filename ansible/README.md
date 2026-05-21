@@ -54,26 +54,32 @@ Se voce usa chave SSH especifica:
 Na raiz do projeto, rode:
 
 ```bash
-ansible -i ansible/inventory.ini finance -m ping
+ansible -i ansible/inventory.ini finance -m ping --ask-pass
 ```
 
-Se pedir senha do sudo durante outros comandos, use `--ask-become-pass`.
+Quando pedir `SSH password`, informe a senha do usuario `univates`.
 
 ## 5. Instalar tudo no servidor
 
 Na raiz do projeto, rode:
 
 ```bash
-ansible-playbook -i ansible/inventory.ini ansible/install.yml
+ansible-playbook -i ansible/inventory.ini ansible/install.yml --ask-pass --ask-become-pass
 ```
 
-Se o usuario `univates` precisar de senha para `sudo`, rode:
+Quando pedir:
 
-```bash
-ansible-playbook -i ansible/inventory.ini ansible/install.yml --ask-become-pass
+```txt
+SSH password:
+BECOME password:
 ```
+
+informe a senha do usuario `univates`.
 
 O playbook vai instalar dependencias, Docker, Docker Compose, Jenkins, clonar o repositorio e subir os ambientes.
+O Docker e o Docker Compose plugin sao instalados pelo repositorio oficial da Docker, nao pelo pacote padrao do Ubuntu.
+
+Nao coloque a senha no `inventory.ini`, porque esse arquivo vai para o Git.
 
 ## Arquivo .env no servidor
 
