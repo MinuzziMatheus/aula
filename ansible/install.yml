@@ -7,6 +7,24 @@
     repo_url: https://github.com/MinuzziMatheus/aula.git
     repo_branch: master
 
+    app_env:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: finance_api
+      DB_USER: postgres
+      DB_PASSWORD: admin
+      DB_SSL: false
+      MAIL_ENABLED: false
+      MAIL_HOST: smtp.seudominio.com
+      MAIL_PORT: 587
+      MAIL_USER: usuario@seudominio.com
+      MAIL_PASSWORD: trocar-esta-senha
+      MAIL_FROM: usuario@seudominio.com
+      MAIL_TO: destinatario@seudominio.com
+      MAIL_SECURE: false
+
     install_jenkins: true
     jenkins_image: finance-api-jenkins
     jenkins_container: finance-api-jenkins
@@ -81,6 +99,14 @@
         dest: "{{ app_dir }}"
         version: "{{ repo_branch }}"
         force: true
+
+    - name: Criar arquivo .env da aplicacao no servidor
+      template:
+        src: templates/env.j2
+        dest: "{{ app_dir }}/.env"
+        owner: root
+        group: root
+        mode: "0600"
 
     - name: Obter grupo do docker.sock
       stat:

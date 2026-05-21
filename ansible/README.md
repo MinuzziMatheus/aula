@@ -75,6 +75,32 @@ ansible-playbook -i ansible/inventory.ini ansible/install.yml --ask-become-pass
 
 O playbook vai instalar dependencias, Docker, Docker Compose, Jenkins, clonar o repositorio e subir os ambientes.
 
+## Arquivo .env no servidor
+
+O `.env` nao vai para o Git. O Ansible cria o arquivo automaticamente em:
+
+```txt
+/opt/finance-api/.env
+```
+
+Os valores ficam em `app_env`, dentro do `ansible/install.yml`.
+
+Para usar e-mail de verdade, troque estes campos antes de rodar:
+
+```yaml
+app_env:
+  MAIL_ENABLED: true
+  MAIL_HOST: smtp.gmail.com
+  MAIL_PORT: 587
+  MAIL_USER: seu-email@gmail.com
+  MAIL_PASSWORD: sua-senha-de-app
+  MAIL_FROM: seu-email@gmail.com
+  MAIL_TO: destino@exemplo.com
+  MAIL_SECURE: false
+```
+
+Nao commite senhas reais no Git. Para senha real, prefira `ansible-vault` ou passe a variavel no momento da execucao.
+
 ## Variaveis principais
 
 - `install_jenkins`: sobe Jenkins em container.
