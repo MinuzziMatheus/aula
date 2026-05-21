@@ -89,6 +89,9 @@ O `.env` nao vai para o Git. O Ansible cria o arquivo automaticamente em:
 /opt/finance-api/.env
 ```
 
+Quando a pipeline roda no Jenkins, o repositorio e clonado em `/var/jenkins_home/workspace/...`.
+Por isso o `Jenkinsfile` cria um `.env` temporario a partir do `.env.example` se o arquivo nao existir no workspace.
+
 Os valores ficam em `app_env`, dentro do `ansible/install.yml`.
 
 Para usar e-mail de verdade, troque estes campos antes de rodar:
