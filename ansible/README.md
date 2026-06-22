@@ -154,3 +154,48 @@ local -> finance-api-local
 hml   -> finance-api-hml
 prod  -> finance-api-prod
 ```
+
+## Depois de reiniciar o servidor
+
+Os containers foram configurados para voltar automaticamente:
+
+```txt
+Jenkins: --restart unless-stopped
+API/DB: restart: always
+```
+
+Depois de um reboot, confira:
+
+```bash
+docker ps
+```
+
+Voce deve ver containers parecidos com:
+
+```txt
+finance-api-jenkins
+finance-api-local-app-1
+finance-api-local-db-1
+finance-api-hml-app-1
+finance-api-hml-db-1
+finance-api-prod-app-1
+finance-api-prod-db-1
+```
+
+Se algo nao subir, rode o Ansible novamente:
+
+```bash
+cd ~/aula
+git pull
+ansible-playbook -i ansible/inventory.ini ansible/install.yml --ask-pass --ask-become-pass
+```
+
+Ou suba manualmente:
+
+```bash
+cd /opt/finance-api
+docker start finance-api-jenkins
+docker compose -p finance-api-local -f docker-compose.yml -f docker-compose.local.yml up -d
+docker compose -p finance-api-hml -f docker-compose.yml -f docker-compose.hml.yml up -d
+docker compose -p finance-api-prod -f docker-compose.yml -f docker-compose.prod.yml up -d
+```

@@ -11,6 +11,37 @@ pipeline {
 
   stages {
 
+    stage('SonarQube Analysis') {
+      steps {
+        sh '''
+          echo "Aguardando SonarQube ficar pronto..."
+          COMPOSE_CMD="docker compose -p finance-api-${AMBIENTE} -f docker-compose.yml -f docker-compose.${AMBIENTE}.yml"
+
+          $COMPOSE_CMD up -d sonarqube
+
+          for i in $(seq 1 30); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9000/api/system/status || true)
+            if [ "$STATUS" = "200" ]; then
+              echo "SonarQube pronto!"
+              break
+            fi
+            echo "Tentativa $i - aguardando SonarQube..."
+            sleep 10
+          done
+
+          docker run --rm \
+            --network="host" \
+            -v "$(pwd):/usr/src" \
+            -w /usr/src \
+            sonarsource/sonar-scanner-cli \
+              -Dsonar.host.url=http://localhost:9000 \
+              -Dsonar.token=${SONAR_TOKEN} \
+              -Dsonar.qualitygate.wait=true \
+              -Dsonar.qualitygate.timeout=300
+        '''
+      }
+    }
+
     stage('Deploy') {
       steps {
         sh '''
