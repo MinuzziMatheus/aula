@@ -14,10 +14,13 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         sh '''
-          COMPOSE_CMD="docker compose -p finance-api-${AMBIENTE} -f docker-compose.yml -f docker-compose.${AMBIENTE}.yml"
-
-          # 1. Subir SonarQube
-          $COMPOSE_CMD up -d sonarqube
+          # 1. Subir SonarQube apenas se nao estiver rodando
+          if ! curl -sf http://localhost:9000/api/system/status > /dev/null 2>&1; then
+            echo "SonarQube nao encontrado, subindo..."
+            docker compose -f docker-compose.yml up -d sonarqube 2>/dev/null || true
+          else
+            echo "SonarQube ja esta rodando"
+          fi
 
           # 2. Aguardar SonarQube ficar operacional
           echo "Aguardando SonarQube..."
