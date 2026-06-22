@@ -14,28 +14,63 @@ pipeline {
     stage('SonarQube Analysis') {
       steps {
         sh '''
-          echo "Aguardando SonarQube ficar pronto..."
           COMPOSE_CMD="docker compose -p finance-api-${AMBIENTE} -f docker-compose.yml -f docker-compose.${AMBIENTE}.yml"
 
+          # 1. Subir SonarQube
           $COMPOSE_CMD up -d sonarqube
 
+          # 2. Aguardar SonarQube ficar operacional
+          echo "Aguardando SonarQube..."
           for i in $(seq 1 30); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9000/api/system/status || true)
-            if [ "$STATUS" = "200" ]; then
-              echo "SonarQube pronto!"
+            if curl -sf -u admin:admin1234 http://localhost:9000/api/system/status | grep -q '"status":"UP"'; then
+              echo "SonarQube pronto! (senha ja configurada)"
               break
             fi
-            echo "Tentativa $i - aguardando SonarQube..."
+            if curl -sf -u admin:admin http://localhost:9000/api/system/status | grep -q '"status":"UP"'; then
+              echo "SonarQube pronto! (primeiro acesso - configurando...)"
+              break
+            fi
+            if [ "$i" = "30" ]; then
+              echo "SonarQube nao iniciou a tempo"
+              exit 1
+            fi
+            echo "Tentativa $i..."
             sleep 10
           done
 
+          # 3. Trocar senha padrao no primeiro uso (ignora se ja foi trocada)
+          curl -s -u admin:admin -X POST "http://localhost:9000/api/users/change_password" \
+            -d "login=admin&previousPassword=admin&password=admin1234" 2>/dev/null || true
+
+          SONAR_CREDS="admin:admin1234"
+
+          # 4. Criar projeto (ignora se ja existe)
+          curl -s -u $SONAR_CREDS -X POST "http://localhost:9000/api/projects/create" \
+            -d "name=Finance+API&project=finance-api" || true
+
+          # 5. Revogar token anterior e gerar novo
+          curl -s -u $SONAR_CREDS -X POST "http://localhost:9000/api/user_tokens/revoke" \
+            -d "name=jenkins-pipeline" || true
+
+          SONAR_TOKEN=$(curl -s -u $SONAR_CREDS -X POST "http://localhost:9000/api/user_tokens/generate" \
+            -d "name=jenkins-pipeline&type=PROJECT_ANALYSIS_TOKEN&projectKey=finance-api" \
+            | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "Falha ao gerar token do SonarQube"
+            exit 1
+          fi
+
+          echo "Token gerado com sucesso"
+
+          # 6. Rodar scanner via Docker
           docker run --rm \
             --network="host" \
             -v "$(pwd):/usr/src" \
             -w /usr/src \
             sonarsource/sonar-scanner-cli \
               -Dsonar.host.url=http://localhost:9000 \
-              -Dsonar.token=${SONAR_TOKEN} \
+              -Dsonar.token=$SONAR_TOKEN \
               -Dsonar.qualitygate.wait=true \
               -Dsonar.qualitygate.timeout=300
         '''
