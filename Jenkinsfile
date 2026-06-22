@@ -24,20 +24,17 @@ pipeline {
 
           # 2. Aguardar SonarQube ficar operacional
           echo "Aguardando SonarQube..."
-          for i in $(seq 1 30); do
-            if curl -sf -u admin:admin1234 http://localhost:9000/api/system/status | grep -q '"status":"UP"'; then
-              echo "SonarQube pronto! (senha ja configurada)"
+          for i in 1 2 3; do
+            RESP=$(curl -sf http://localhost:9000/api/system/status 2>&1 || true)
+            echo "Tentativa $i - resposta: $RESP"
+            if echo "$RESP" | grep -q '"status":"UP"'; then
+              echo "SonarQube pronto!"
               break
             fi
-            if curl -sf -u admin:admin http://localhost:9000/api/system/status | grep -q '"status":"UP"'; then
-              echo "SonarQube pronto! (primeiro acesso - configurando...)"
-              break
-            fi
-            if [ "$i" = "30" ]; then
-              echo "SonarQube nao iniciou a tempo"
+            if [ "$i" = "3" ]; then
+              echo "SonarQube nao respondeu. Verifique se o container esta rodando: docker ps | grep sonar"
               exit 1
             fi
-            echo "Tentativa $i..."
             sleep 10
           done
 
