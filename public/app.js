@@ -4,7 +4,7 @@ const API = '/api';
 document.querySelectorAll('.nav-links a').forEach(function (link) {
   link.addEventListener('click', function (e) {
     e.preventDefault();
-    var page = this.dataset.page;
+    const page = this.dataset.page;
 
     document.querySelectorAll('.nav-links a').forEach(function (l) { l.classList.remove('active'); });
     this.classList.add('active');
@@ -17,10 +17,10 @@ document.querySelectorAll('.nav-links a').forEach(function (link) {
 // === LANÇAMENTOS ===
 
 function formatarData(dataISO) {
-  var d = new Date(dataISO);
-  var dia = String(d.getUTCDate()).padStart(2, '0');
-  var mes = String(d.getUTCMonth() + 1).padStart(2, '0');
-  var ano = d.getUTCFullYear();
+  const d = new Date(dataISO);
+  const dia = String(d.getUTCDate()).padStart(2, '0');
+  const mes = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const ano = d.getUTCFullYear();
   return dia + '/' + mes + '/' + ano;
 }
 
@@ -29,24 +29,24 @@ function formatarValor(valor) {
 }
 
 function carregarLancamentos() {
-  var tipo = document.getElementById('filtro-tipo').value;
-  var situacao = document.getElementById('filtro-situacao').value;
+  const tipo = document.getElementById('filtro-tipo').value;
+  const situacao = document.getElementById('filtro-situacao').value;
 
-  var params = new URLSearchParams();
+  const params = new URLSearchParams();
   if (tipo) params.append('tipo_lancamento', tipo);
   if (situacao) params.append('situacao', situacao);
 
-  var url = API + '/lancamentos';
+  let url = API + '/lancamentos';
   if (params.toString()) url += '?' + params.toString();
 
   fetch(url)
     .then(function (r) { return r.json(); })
     .then(function (lancamentos) {
-      var tbody = document.querySelector('#tabela-lancamentos tbody');
+      const tbody = document.querySelector('#tabela-lancamentos tbody');
       tbody.innerHTML = '';
 
       lancamentos.forEach(function (l) {
-        var tr = document.createElement('tr');
+        const tr = document.createElement('tr');
         tr.innerHTML =
           '<td>' + l.id + '</td>' +
           '<td>' + l.descricao + '</td>' +
@@ -66,7 +66,7 @@ document.getElementById('btn-filtrar').addEventListener('click', carregarLancame
 document.querySelector('#tabela-lancamentos tbody').addEventListener('click', function (e) {
   if (!e.target.classList.contains('btn-edit')) return;
 
-  var id = e.target.dataset.id;
+  const id = e.target.dataset.id;
   fetch(API + '/lancamentos/' + id)
     .then(function (r) { return r.json(); })
     .then(function (l) {
@@ -87,8 +87,8 @@ document.getElementById('btn-cancelar-edicao').addEventListener('click', functio
 document.getElementById('form-editar').addEventListener('submit', function (e) {
   e.preventDefault();
 
-  var id = document.getElementById('edit-id').value;
-  var dados = {
+  const id = document.getElementById('edit-id').value;
+  const dados = {
     descricao: document.getElementById('edit-descricao').value,
     data_lancamento: document.getElementById('edit-data').value,
     valor: Number(document.getElementById('edit-valor').value),
@@ -110,14 +110,14 @@ document.getElementById('form-editar').addEventListener('submit', function (e) {
 
 // Exportar PDF
 document.getElementById('btn-exportar-pdf').addEventListener('click', function () {
-  var tipo = document.getElementById('filtro-tipo').value;
-  var situacao = document.getElementById('filtro-situacao').value;
+  const tipo = document.getElementById('filtro-tipo').value;
+  const situacao = document.getElementById('filtro-situacao').value;
 
-  var params = new URLSearchParams();
+  const params = new URLSearchParams();
   if (tipo) params.append('tipo_lancamento', tipo);
   if (situacao) params.append('situacao', situacao);
 
-  var url = API + '/lancamentos/export/pdf';
+  let url = API + '/lancamentos/export/pdf';
   if (params.toString()) url += '?' + params.toString();
 
   window.open(url, '_blank');
@@ -128,14 +128,14 @@ document.getElementById('btn-exportar-pdf').addEventListener('click', function (
 document.getElementById('form-usuario').addEventListener('submit', function (e) {
   e.preventDefault();
 
-  var dados = {
+  const dados = {
     nome: document.getElementById('user-nome').value,
     login: document.getElementById('user-login').value,
     senha: document.getElementById('user-senha').value,
     situacao: document.getElementById('user-situacao').value
   };
 
-  var msgEl = document.getElementById('msg-usuario');
+  const msgEl = document.getElementById('msg-usuario');
 
   fetch(API + '/usuarios', {
     method: 'POST',
