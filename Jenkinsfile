@@ -11,21 +11,27 @@ pipeline {
 
   stages {
 
-    stage('Install Dependencies') {
-      steps {
-        sh 'npm install'
-      }
-    }
-
     stage('Lint') {
       steps {
-        sh 'npx eslint src/ server.js'
+        sh '''
+          docker run --rm \
+            --volumes-from finance-api-jenkins \
+            -w "$(pwd)" \
+            node:18 \
+            sh -c "npm install && npx eslint src/ server.js"
+        '''
       }
     }
 
     stage('Tests') {
       steps {
-        sh 'npm test || true'
+        sh '''
+          docker run --rm \
+            --volumes-from finance-api-jenkins \
+            -w "$(pwd)" \
+            node:18 \
+            sh -c "npm test || true"
+        '''
       }
     }
 
