@@ -34,8 +34,8 @@ module.exports = [
       'no-func-assign': 'error',
       'no-redeclare': 'error',
       'eqeqeq': ['warn', 'always'],
-      'no-var': 'warn',
-      'prefer-const': 'warn',
+      'no-var': 'error',
+      'prefer-const': 'error',
     },
   },
   {
@@ -65,8 +65,8 @@ module.exports = [
       'no-func-assign': 'error',
       'no-redeclare': 'error',
       'eqeqeq': ['warn', 'always'],
-      'no-var': 'warn',
-      'prefer-const': 'warn',
+      'no-var': 'error',
+      'prefer-const': 'error',
     },
   },
 ];
