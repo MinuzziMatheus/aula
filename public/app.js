@@ -62,6 +62,39 @@ function carregarLancamentos() {
 
 document.getElementById('btn-filtrar').addEventListener('click', carregarLancamentos);
 
+// Novo Lançamento
+document.getElementById('btn-novo-lancamento').addEventListener('click', function () {
+  document.getElementById('form-novo').reset();
+  document.getElementById('modal-novo').classList.remove('hidden');
+});
+
+document.getElementById('btn-cancelar-novo').addEventListener('click', function () {
+  document.getElementById('modal-novo').classList.add('hidden');
+});
+
+document.getElementById('form-novo').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const dados = {
+    descricao: document.getElementById('novo-descricao').value,
+    data_lancamento: document.getElementById('novo-data').value,
+    valor: Number(document.getElementById('novo-valor').value),
+    tipo_lancamento: document.getElementById('novo-tipo').value,
+    situacao: document.getElementById('novo-situacao').value
+  };
+
+  fetch(API + '/lancamentos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados)
+  })
+    .then(function (r) { return r.json(); })
+    .then(function () {
+      document.getElementById('modal-novo').classList.add('hidden');
+      carregarLancamentos();
+    });
+});
+
 // Editar
 document.querySelector('#tabela-lancamentos tbody').addEventListener('click', function (e) {
   if (!e.target.classList.contains('btn-edit')) return;

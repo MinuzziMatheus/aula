@@ -20,7 +20,10 @@
     <section id="page-lancamentos" class="page active">
       <div class="page-header">
         <h2>Lançamentos</h2>
-        <button id="btn-exportar-pdf" class="btn btn-secondary">Exportar PDF</button>
+        <div class="page-header-actions">
+          <button id="btn-novo-lancamento" class="btn btn-success">Novo Lançamento</button>
+          <button id="btn-exportar-pdf" class="btn btn-secondary">Exportar PDF</button>
+        </div>
       </div>
 
       <div class="filtros">
@@ -51,6 +54,40 @@
         </thead>
         <tbody></tbody>
       </table>
+
+      <!-- Modal Novo -->
+      <div id="modal-novo" class="modal hidden">
+        <div class="modal-content">
+          <h3>Novo Lançamento</h3>
+          <form id="form-novo">
+            <label>Descrição
+              <input type="text" id="novo-descricao" required>
+            </label>
+            <label>Data
+              <input type="date" id="novo-data" required>
+            </label>
+            <label>Valor
+              <input type="number" id="novo-valor" step="0.01" required>
+            </label>
+            <label>Tipo
+              <select id="novo-tipo" required>
+                <option value="RECEITA">Receita</option>
+                <option value="DESPESA">Despesa</option>
+              </select>
+            </label>
+            <label>Situação
+              <select id="novo-situacao" required>
+                <option value="PENDENTE">Pendente</option>
+                <option value="PAGO">Pago</option>
+              </select>
+            </label>
+            <div class="modal-actions">
+              <button type="submit" class="btn btn-success">Cadastrar</button>
+              <button type="button" class="btn btn-cancel" id="btn-cancelar-novo">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
       <!-- Modal Editar -->
       <div id="modal-editar" class="modal hidden">

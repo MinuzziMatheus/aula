@@ -154,6 +154,15 @@ tbody tr:hover {
   background: #0d6efd;
 }
 
+.btn-success {
+  background: #198754;
+}
+
+.page-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 /* Modal */
 .modal {
   position: fixed;
