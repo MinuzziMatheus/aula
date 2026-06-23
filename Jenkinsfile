@@ -18,7 +18,7 @@ pipeline {
             --volumes-from finance-api-jenkins \
             -w "$(pwd)" \
             node:18 \
-            sh -c "npm install && npx eslint src/ server.js"
+            sh -c "npm install && npx eslint src/ server.js public/"
         '''
       }
     }

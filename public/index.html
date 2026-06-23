@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance API</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <h1>Finance API</h1>
+    <div class="nav-links">
+      <a href="#" class="active" data-page="lancamentos">Lançamentos</a>
+      <a href="#" data-page="usuarios">Cadastrar Usuário</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- LANÇAMENTOS -->
+    <section id="page-lancamentos" class="page active">
+      <div class="page-header">
+        <h2>Lançamentos</h2>
+        <button id="btn-exportar-pdf" class="btn btn-secondary">Exportar PDF</button>
+      </div>
+
+      <div class="filtros">
+        <select id="filtro-tipo">
+          <option value="">Todos os tipos</option>
+          <option value="RECEITA">Receita</option>
+          <option value="DESPESA">Despesa</option>
+        </select>
+        <select id="filtro-situacao">
+          <option value="">Todas situações</option>
+          <option value="PAGO">Pago</option>
+          <option value="PENDENTE">Pendente</option>
+        </select>
+        <button id="btn-filtrar" class="btn">Filtrar</button>
+      </div>
+
+      <table id="tabela-lancamentos">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th>Data</th>
+            <th>Valor</th>
+            <th>Tipo</th>
+            <th>Situação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <!-- Modal Editar -->
+      <div id="modal-editar" class="modal hidden">
+        <div class="modal-content">
+          <h3>Editar Lançamento</h3>
+          <form id="form-editar">
+            <input type="hidden" id="edit-id">
+            <label>Descrição
+              <input type="text" id="edit-descricao" required>
+            </label>
+            <label>Data
+              <input type="date" id="edit-data" required>
+            </label>
+            <label>Valor
+              <input type="number" id="edit-valor" step="0.01" required>
+            </label>
+            <label>Tipo
+              <select id="edit-tipo" required>
+                <option value="RECEITA">Receita</option>
+                <option value="DESPESA">Despesa</option>
+              </select>
+            </label>
+            <label>Situação
+              <select id="edit-situacao" required>
+                <option value="PAGO">Pago</option>
+                <option value="PENDENTE">Pendente</option>
+              </select>
+            </label>
+            <div class="modal-actions">
+              <button type="submit" class="btn">Salvar</button>
+              <button type="button" class="btn btn-cancel" id="btn-cancelar-edicao">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- CADASTRAR USUÁRIO -->
+    <section id="page-usuarios" class="page hidden">
+      <h2>Cadastrar Usuário</h2>
+      <form id="form-usuario">
+        <label>Nome
+          <input type="text" id="user-nome" required>
+        </label>
+        <label>Login
+          <input type="text" id="user-login" required>
+        </label>
+        <label>Senha
+          <input type="password" id="user-senha" required>
+        </label>
+        <label>Situação
+          <select id="user-situacao" required>
+            <option value="ATIVO">Ativo</option>
+            <option value="INATIVO">Inativo</option>
+          </select>
+        </label>
+        <button type="submit" class="btn">Cadastrar</button>
+      </form>
+      <div id="msg-usuario" class="msg hidden"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
