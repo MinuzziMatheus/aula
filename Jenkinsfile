@@ -17,7 +17,7 @@ pipeline {
           docker run --rm \
             --volumes-from finance-api-jenkins \
             -w "$(pwd)" \
-            node:18 \
+            node:24 \
             sh -c "npm install && npx eslint src/ server.js public/"
         '''
       }
@@ -29,7 +29,7 @@ pipeline {
           docker run --rm \
             --volumes-from finance-api-jenkins \
             -w "$(pwd)" \
-            node:18 \
+            node:24 \
             sh -c "npm test || true"
         '''
       }
