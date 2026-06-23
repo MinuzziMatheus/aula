@@ -98,3 +98,25 @@ docker compose -p finance-api-local -f docker-compose.yml -f docker-compose.loca
 docker compose -p finance-api-hml -f docker-compose.yml -f docker-compose.hml.yml up -d
 docker compose -p finance-api-prod -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
+
+## 7 - Acessar o PostgreSQL
+
+Para listar todas as tabelas:
+
+```bash
+# Local
+docker compose -p finance-api-local -f docker-compose.yml -f docker-compose.local.yml exec db psql -U postgres -d finance_api_local -c '\dt'
+
+# HML
+docker compose -p finance-api-hml -f docker-compose.yml -f docker-compose.hml.yml exec db psql -U postgres -d finance_api_hml -c '\dt'
+
+# Prod
+docker compose -p finance-api-prod -f docker-compose.yml -f docker-compose.prod.yml exec db psql -U postgres -d finance_api_prod -c '\dt'
+```
+
+Comandos úteis dentro do psql:
+
+- `\dt` — listar tabelas
+- `\d nome_tabela` — ver estrutura de uma tabela
+- `SELECT * FROM nome_tabela;` — ver dados
+- `\q` — sair
