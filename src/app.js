@@ -1,4 +1,4 @@
-// var testeErro = "isso vai falhar no lint";
+var testeErro = "isso vai falhar no lint";
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
